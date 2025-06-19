@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.widget.CalendarView
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,16 +16,20 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.todo.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import com.google.gson.JsonParser
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -81,7 +84,7 @@ class MainActivity : AppCompatActivity() {
             showAddTaskDialog()
         }
 
-        binding.AIbutton.setOnClickListener { // Assuming aibutton is your "compass" button
+        binding.AIbutton.setOnClickListener {
             handleAIFeatureClick()
         }
     }
@@ -188,16 +191,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchTasksFromAI(prompt: String) {
-        // IMPORTANT: Choose the correct model name and ensure your API key has access to it.
-        // Common models: "gemini-pro", "gemini-1.5-flash-latest"
-        // Verify the exact endpoint for the model you are using.
-        val modelName = "gemini-1.5-flash-latest" // Or "gemini-pro"
+
+        val modelName = "gemini-1.5-flash-latest"
         val apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$APIKEY"
 
         val partsArray = listOf(mapOf("text" to prompt))
         val contentsArray = listOf(mapOf("parts" to partsArray))
 
-        // Adjust generationConfig as needed
         val generationConfig = mapOf(
             "temperature" to 0.7,
             "topK" to 1,
@@ -206,8 +206,7 @@ class MainActivity : AppCompatActivity() {
             "stopSequences" to emptyList<String>()
         )
 
-        // Safety settings - adjust thresholds as needed (BLOCK_NONE, BLOCK_LOW_AND_ABOVE, BLOCK_MEDIUM_AND_ABOVE, BLOCK_ONLY_HIGH)
-        val safetySettingsArray = listOf(
+       val safetySettingsArray = listOf(
             mapOf("category" to "HARM_CATEGORY_HARASSMENT", "threshold" to "BLOCK_MEDIUM_AND_ABOVE"),
             mapOf("category" to "HARM_CATEGORY_HATE_SPEECH", "threshold" to "BLOCK_MEDIUM_AND_ABOVE"),
             mapOf("category" to "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold" to "BLOCK_MEDIUM_AND_ABOVE"),
@@ -241,7 +240,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val responseBodyString = response.body?.string() // Read body once
+                val responseBodyString = response.body?.string()
                 Log.d("GeminiAPI", "Response Code: ${response.code}")
                 Log.d("GeminiAPI", "Response Body: $responseBodyString")
 
@@ -249,7 +248,7 @@ class MainActivity : AppCompatActivity() {
                     var errorMessage = "API error: ${response.code} - ${response.message}"
                     if (!responseBodyString.isNullOrEmpty()) {
                         errorMessage += "\nDetails: $responseBodyString"
-                        // Try to parse detailed error message if API provides it in JSON
+
                         try {
                             val errorJson = JsonParser.parseString(responseBodyString).asJsonObject
                             if (errorJson.has("error") && errorJson["error"].isJsonObject) {
@@ -282,14 +281,14 @@ class MainActivity : AppCompatActivity() {
                     val jsonObject = jsonElement.asJsonObject
 
                     if (!jsonObject.has("candidates") || !jsonObject.getAsJsonArray("candidates").isJsonArray) {
-                        // Check for promptFeedback if no candidates
+
                         if (jsonObject.has("promptFeedback")) {
                             val promptFeedback = jsonObject.getAsJsonObject("promptFeedback")
                             if (promptFeedback.has("blockReason")) {
                                 val blockReason = promptFeedback.get("blockReason").asString
                                 throw Exception("Prompt was blocked. Reason: $blockReason")
                             }
-                            // You can also check promptFeedback.safetyRatings here
+
                         }
                         throw Exception("No 'candidates' array found in AI response.")
                     }
@@ -328,7 +327,7 @@ class MainActivity : AppCompatActivity() {
                     val suggestedTasks = generatedText.lines()
                         .mapNotNull { line ->
                             val trimmedLine = line.trim()
-                            // Remove common list prefixes like "-", "*", "1.", etc.
+
                             trimmedLine.removePrefix("-").removePrefix("*").replaceFirst(Regex("^\\d+\\.\\s*"), "").trim()
                         }
                         .filter { it.isNotBlank() }
@@ -360,8 +359,7 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_SUGGESTED_TASKS)
     }
 
-    // This is the older way to handle activity results.
-    // For new interactions, prefer registerForActivityResult.
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

@@ -82,16 +82,13 @@
     <color name="delete_icon_color">@color/md_theme_error</color>
     <color name="remove_icon_color">@color/md_theme_onSurfaceVariant</color>
 
-    <!-- Calendar Specific (These are harder to control without custom views) -->
     <color name="calendar_selected_date_circle">@color/md_theme_primary</color>
     <color name="calendar_text_default">@color/md_theme_onSurface</color>
     <color name="calendar_text_selected">@color/md_theme_onPrimary</color>
 
-    <!-- Task Item Strike-through color -->
-    <color name="task_strikethrough_text">@color/md_theme_onSurfaceVariant</color>
-    <!-- ... Your existing light theme colors ... -->
 
-    <!-- Dark Theme Palette (Example - Replace with your generated values) -->
+    <color name="task_strikethrough_text">@color/md_theme_onSurfaceVariant</color>
+
     <color name="md_theme_dark_primary">#D0BCFF</color>
     <color name="md_theme_dark_onPrimary">#381E72</color>
     <color name="md_theme_dark_primaryContainer">#4F378B</color>
@@ -146,11 +143,10 @@
     <color name="md_theme_dark_inverseOnSurface">#313033</color>
     <color name="md_theme_dark_inversePrimary">#6750A4</color>
 
-    <!-- Specific UI Elements for Dark Mode (if they differ beyond theme attributes) -->
     <color name="dark_divider_color">@color/md_theme_dark_outlineVariant</color>
     <color name="dark_fab_icon_tint_on_primary">@color/md_theme_dark_onPrimary</color>
     <color name="dark_fab_icon_tint_on_secondary">@color/md_theme_dark_onSecondary</color>
-    <color name="dark_toolbar_title_color">@color/md_theme_dark_onPrimary</color> <!-- if toolbar is primary -->
+    <color name="dark_toolbar_title_color">@color/md_theme_dark_onPrimary</color>
     <color name="dark_delete_icon_color">@color/md_theme_dark_error</color>
     <color name="dark_remove_icon_color">@color/md_theme_dark_onSurfaceVariant</color>
 
