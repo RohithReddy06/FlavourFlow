@@ -1,6 +1,6 @@
 package com.example.todo
+
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
     private lateinit var adapter: TaskAdapter
     private var selectedDate: String = ""
-    private val APIKEY = "AIzaSyC-A4JRlExNT500cOthK8FrOzYr_I37lzY"
+    private val APIKEY = "YOUR_GEMINI_API_KEY"
 
     private val client = OkHttpClient()
     private val gson = Gson()
@@ -122,7 +122,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = connectivityManager.activeNetwork ?: return false
             val activeNetwork =
